@@ -28,8 +28,10 @@ import {
       if (coins.length) {
         // fetch coin price
         for (const coin of coins) {
-          //  const price = await this.coinPrice(coin)
-          const price = Math.floor(Math.random() * 100) + 1
+           const price = await this.coinPrice(coin)
+          // const price = Math.floor(Math.random() * 100) + 1
+          const query = `select  update_signals_based_on_price(p_coin_name :=:coin_name, p_current_price :=:price)`
+          await this.DB.query(query, { replacements: { price, coin_name: coin }, type: QueryTypes.SELECT });
           await this.redisClient.publish("my_channel", JSON.stringify({coin_name: coin, price}));
         }
       }
