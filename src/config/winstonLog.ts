@@ -86,9 +86,9 @@ const winstonLogOptions = {
                 myFormat
               )
             }),
-            infotransport,
+            // infotransport,
             errortransport,
-            new SequelizeTransport({ sequelize, level: `${myConfiglevelsKeyArray[myConfiglevelsKeyArray.length - 1]}`})
+            // new SequelizeTransport({ sequelize, level: `${myConfiglevelsKeyArray[myConfiglevelsKeyArray.length - 1]}`})
           ]
 }
 

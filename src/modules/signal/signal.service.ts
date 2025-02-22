@@ -22,6 +22,15 @@ import {
         @Inject(DATABASE_CONNECTION) private DB: Sequelize
     ) {}
 
+    @Cron(CronExpression.EVERY_30_SECONDS)
+    async calculateROI() {
+      const query = `select roi_win_ratio_calculate()`
+      await this.DB.query(query, { type: QueryTypes.SELECT }).catch(e => {
+        const errorResponse = e['response'] ? (e['response']['data'] ? e['response']['data'] : e['response']) : e
+          winstonLog.log('error', `query => ${query} %o`, errorResponse);
+      })
+    }
+
     // @Cron(CronExpression.EVERY_5_SECONDS)
     @Timeout(10000)
     async handleCron() {
@@ -38,7 +47,10 @@ import {
               if (!this.coinPrices[coin_name] || this.coinPrices[coin_name] != price) {
                 // const price = Math.floor(Math.random() * 100) + 1
                 const query = `select  update_signals_based_on_price(p_coin_name :=:coin_name, p_current_price :=:price)`
-                await this.DB.query(query, { replacements: { price, coin_name }, type: QueryTypes.SELECT });
+                await this.DB.query(query, { replacements: { price, coin_name }, type: QueryTypes.SELECT }).catch(e => {
+                  const errorResponse = e['response'] ? (e['response']['data'] ? e['response']['data'] : e['response']) : e
+                    winstonLog.log('error', `query => ${query} %o`, errorResponse);
+                })
                 await this.redisClient.publish("my_channel", JSON.stringify({coin_name, price}));
               }
 
