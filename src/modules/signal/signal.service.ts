@@ -25,6 +25,7 @@ import {
     // @Cron(CronExpression.EVERY_5_SECONDS)
     @Timeout(10000)
     async handleCron() {
+      console.log('*********** start ***********')
       const start = new Date().getTime();
       const coins = await this.getAllCoins()
       // console.log('coins => ', coins)
@@ -44,13 +45,15 @@ import {
               this.coinPrices[coin_name] = price
            }
         }
+      } else {
+        console.log('coins length is 0')
       }
      
       const totalTimeTake = Date.now() - start;
       const delay = Math.max(this.executionThreshold - totalTimeTake, 0);
   
       console.log(`Execution time: ${totalTimeTake}ms, Next run in: ${delay}ms`);
-  
+      console.log('*********** End ***********')
       setTimeout(() => this.handleCron(), delay);
 
     }
